@@ -1,0 +1,18 @@
+---
+- hosts: test
+  vars:
+    dest_dir: /home/ansible/
+    targets: /home/ansible/2019-05-23-22-29-20_ansible.ip_list
+    results: /home/ansible/2019-05-23-22-29-20_ansible.traceroute
+  remote_user: root
+  tasks:
+    - name: push targets to remote host
+      copy:
+        src: "{{ targets }}"
+        dest: "{{ dest_dir }}"
+    - name: run command traceroute
+      shell: cat "{{ targets }}" | xargs -I {} traceroute -4 -A -w 2 {} > "{{ results }}"
+    - name: pull results from remote host
+      fetch:
+        src: "{{ results }}"
+        dest: "{{ dest_dir }}"
